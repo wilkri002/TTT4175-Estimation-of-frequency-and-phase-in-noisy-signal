@@ -163,7 +163,10 @@ def main_estimate():
     NM_w_array_20 = []
     NM_w_var_array_10 = []
     NM_w_var_array_20 = []
-    os.mkdir("results")
+    try:
+        os.mkdir("results")
+    except:
+        pass
     
     global k            #Use global to acces global variable k
     k = 10              
