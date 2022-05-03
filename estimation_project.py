@@ -4,6 +4,7 @@ from scipy.fft import fft, fftfreq, fftshift
 import scipy.optimize
 import statistics as st
 from time import time
+import os
 
 #Constants related to the signal
 fs = 10**6          #sampling rate
@@ -108,11 +109,8 @@ def nelderMeadSignalGenerator(sigma):
 def nelderMead(sigma, iterations):
     
     NMfreq = []
-    NMphi = []
     NMfreqErrors = []
-    NMphiErrors = []
     
-    time_array = []
     time_before = time()
     
     for i in range(iterations):
@@ -138,7 +136,7 @@ def nelderMead(sigma, iterations):
 
 def add_fileheader(filename):
     f = open(filename, "w")
-    #f.write("Sep=\n")
+    f.write("Sep=,\n")
     f.write("SNR,w,phi,w_var_estiamte,phi_var_estiamte,w_error,phi_error,w_error_var,phi_error_var,w_CRLB,phi_CRLB\n")
     f.close()
 
@@ -149,7 +147,7 @@ def write_to_file(filename, SNR, w, phi, w_var, phi_var, w_error, phi_error, w_e
 
 def add_fileheader_nelder(filename):
     f = open(filename, "w")
-    #f.write("Sep=\n")
+    f.write("Sep=,\n")
     f.write("SNR,w_NM,w_var_NM,w_20,w_var_20,w_10,w_var_10,w_CRLB\n")
     f.close()
 
@@ -165,6 +163,7 @@ def main_estimate():
     NM_w_array_20 = []
     NM_w_var_array_10 = []
     NM_w_var_array_20 = []
+    os.mkdir("results")
     
     global k            #Use global to acces global variable k
     k = 10              
@@ -227,13 +226,13 @@ def main_estimate():
         
         print()
         print(f"Results with M=2^{k}={M}")
-        print("Average angular frequency:", mean_w)
-        print("Average angular frequency error:", mean_err_w)
-        print("Angular frequency variance:", var_err_w)
+        print("Angular frequency at SNR=60dB:", mean_w)
+        print("Angular frequency error at SNR=60dB:", mean_err_w)
+        print("Angular frequency variance at SNR=60dB:", var_err_w)
         print()
-        print("Average phase:", mean_phi)
-        print("Average phase error:", mean_err_phi)
-        print("Phase variance:", var_err_phi)    
+        print("Phase at SNR=60dB:", mean_phi)
+        print("Phase error at SNR=60dB:", mean_err_phi)
+        print("Phase variance at SNR=60dB:", var_err_phi)    
 
     return time_array_20, time_array_10, NM_w_array_20, NM_w_var_array_20, NM_w_array_10, NM_w_var_array_10
 
