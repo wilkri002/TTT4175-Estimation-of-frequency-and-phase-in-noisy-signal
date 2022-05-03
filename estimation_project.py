@@ -20,8 +20,8 @@ N = 513             #lenght of signal
 n0 = -256           #starting point
 
 iterations=100      #Number of iterations to run code
-step = 10 #Number of steps between each SNR value. Set to 10 to only run k=10 and 20. Set to 2 to run k=10 til 20
-write_to_file = False #If True, the results of the estimations are written to a CSV file
+step = 2 #Number of steps between each SNR value. Set to 10 to only run k=10 and 20. Set to 2 to run k=10 til 20
+write_to_file_bool = True #If True, the results of the estimations are written to a CSV file
 
 #time vector
 t = np.linspace(n0*T, (n0+N-1)*T, N)
@@ -46,7 +46,6 @@ def FFT(signal):
 
 def calculateMLE(yf):
     arg_max = np.argmax(np.abs(yf))
-    #f_e = freqs[np.argmax(np.abs(yfs))]
     w_e = (2*np.pi*arg_max)/(M*T)                       #estimated omega
     phi_e = np.angle(yf[arg_max]*np.exp(-1j*w_e*n0*T))  #estimated phi
 
@@ -175,7 +174,7 @@ def main_estimate():
         M = 2**k
         print(f"\nRunning with size {k}")
         filename = f"results/estiamte_{M}.csv"
-        if write_to_file:
+        if write_to_file_bool:
             add_fileheader(filename)
         
         for SNR_DB in  range (-10, 70, 10):
@@ -223,7 +222,7 @@ def main_estimate():
                 NM_w_array_10.append(mean_w)
                 NM_w_var_array_10.append(var_w_e)
             
-            if write_to_file:
+            if write_to_file_bool:
                 write_to_file(filename, SNR_DB, mean_w, mean_phi, var_w_e, var_phi_e, mean_err_w, mean_err_phi, var_err_w, var_err_phi, w_CRLB, phi_CRLB)
         
         print()
@@ -241,7 +240,7 @@ def main_estimate():
 
 def main_NM(time_array_20, time_array_10, mean_w_20, var_w_20, mean_w_10, var_w_10):
     filename = "results/estiamte_nelder.csv"
-    if write_to_file:
+    if write_to_file_bool:
         add_fileheader_nelder(filename)
     
     NM_time_array = []
@@ -270,13 +269,13 @@ def main_NM(time_array_20, time_array_10, mean_w_20, var_w_20, mean_w_10, var_w_
         
         w_CRLB,_ = calculateCRLB(sigma2)
 
-        if write_to_file:
+        if write_to_file_bool:
             write_to_file_nelder(filename, SNR_DB, w_NM, w_NM_var, mean_w_20[i], var_w_20[i], mean_w_10[i], var_w_10[i], w_CRLB)
         i+=1
     
-    print("Average angular frequency using Nelder Mead:", np.mean(NM_freq_mean_array))
-    print("Average angular frequency error using Nelder Mead:", np.mean(NM_freq_meanerror))
-    print("Angular Frequency variance using Nelder Mead:", np.mean(NM_freq_var))
+    print("Angular frequency using Nelder Mead for SNR=60dB:", NM_freq_mean_array[len(NM_freq_mean_array)-1])
+    print("Angular frequency error using Nelder Mead for SNR=60dB:", NM_freq_meanerror[len(NM_freq_meanerror)-1])
+    print("Angular Frequency variance using Nelder Mead for SNR=60dB:", NM_freq_var[len(NM_freq_meanerror)-1])
     print()
     
     print(f"Average time using normal method (M=2^20)[s]:", np.mean(time_array_20))
